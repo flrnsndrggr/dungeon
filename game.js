@@ -8,8 +8,8 @@ class DungeonCrawler {
         this.tileSize = 32;
         this.map = this.createMap();
         this.player = {
-            x: 1,
-            y: 1,
+            x: this.tileSize * 1,
+            y: this.tileSize * 1,
             width: this.tileSize,
             height: this.tileSize,
             health: 100,
@@ -157,8 +157,8 @@ class DungeonCrawler {
                 // Draw enemy
                 this.ctx.fillStyle = '#ff0000';
                 this.ctx.fillRect(
-                    enemy.x * this.tileSize + 4,
-                    enemy.y * this.tileSize + 4,
+                    enemy.x + 4,
+                    enemy.y + 4,
                     enemy.width - 8,
                     enemy.height - 8
                 );
@@ -166,8 +166,8 @@ class DungeonCrawler {
                 // Draw enemy health bar
                 this.ctx.fillStyle = '#ff0000';
                 this.ctx.fillRect(
-                    enemy.x * this.tileSize + 4,
-                    enemy.y * this.tileSize + 2,
+                    enemy.x + 4,
+                    enemy.y + 2,
                     (enemy.width - 8) * (enemy.health / 100),
                     2
                 );
@@ -195,8 +195,8 @@ class DungeonCrawler {
         // Draw player character
         this.ctx.fillStyle = '#00ff00';
         this.ctx.fillRect(
-            this.player.x * this.tileSize + 4,
-            this.player.y * this.tileSize + 4,
+            this.player.x + 4,
+            this.player.y + 4,
             this.player.width - 8,
             this.player.height - 8
         );
@@ -204,8 +204,8 @@ class DungeonCrawler {
         // Draw player's sword with a better animation
         this.ctx.fillStyle = '#fff';
         this.ctx.fillRect(
-            this.player.x * this.tileSize + 8,
-            this.player.y * this.tileSize + 12,
+            this.player.x + 8,
+            this.player.y + 12,
             4,
             8
         );
@@ -214,8 +214,8 @@ class DungeonCrawler {
         this.ctx.fillStyle = '#000';
         this.ctx.beginPath();
         this.ctx.arc(
-            this.player.x * this.tileSize + 12,
-            this.player.y * this.tileSize + 12,
+            this.player.x + 12,
+            this.player.y + 12,
             4,
             0,
             Math.PI * 2
@@ -225,8 +225,8 @@ class DungeonCrawler {
         // Add player's health bar
         this.ctx.fillStyle = '#ff0000';
         this.ctx.fillRect(
-            this.player.x * this.tileSize + 4,
-            this.player.y * this.tileSize + 2,
+            this.player.x + 4,
+            this.player.y + 2,
             (this.player.width - 8) * (this.player.health / 100),
             2
         );
@@ -234,9 +234,9 @@ class DungeonCrawler {
 
     createEnemies() {
         return [
-            { x: 3, y: 3, width: this.tileSize, height: this.tileSize, health: 50 },
-            { x: 5, y: 7, width: this.tileSize, height: this.tileSize, health: 50 },
-            { x: 9, y: 5, width: this.tileSize, height: this.tileSize, health: 50 }
+            { x: 3 * this.tileSize, y: 3 * this.tileSize, width: this.tileSize, height: this.tileSize, health: 50 },
+            { x: 5 * this.tileSize, y: 7 * this.tileSize, width: this.tileSize, height: this.tileSize, health: 50 },
+            { x: 9 * this.tileSize, y: 5 * this.tileSize, width: this.tileSize, height: this.tileSize, health: 50 }
         ];
     }
 
@@ -275,7 +275,7 @@ class DungeonCrawler {
         const playerY = Math.floor(this.player.y / this.tileSize);
 
         // Handle player attacks
-        if (this.keys['Space'] && this.player.attackCooldown <= 0) {
+        if (this.keys[' '] && this.player.attackCooldown <= 0) {
             this.player.attackCooldown = 30;
             this.handlePlayerAttack();
         }
@@ -339,7 +339,17 @@ class DungeonCrawler {
             this.updateScore(this.score + 200);
             this.updateLevel(this.level + 1);
             this.enemies = this.createEnemies(); // Reset enemies
-        }        requestAnimationFrame(() => this.gameLoop());
+        }
+    }
+
+    gameLoop() {
+        // Update state and render a frame
+        this.update();
+        this.drawMap();
+        this.drawEnemies();
+        this.drawPlayer();
+        this.drawUI();
+        requestAnimationFrame(() => this.gameLoop());
     }
 }
 
